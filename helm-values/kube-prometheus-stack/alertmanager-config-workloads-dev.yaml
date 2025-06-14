@@ -1,0 +1,36 @@
+alertmanagerConfig:
+  name: sns-notification
+  release: skynet-prometheus
+  namespace: prometheus
+  route:
+    groupBy:
+    - alertname
+    groupInterval: 5m
+    groupWait: 30s
+    matchers:
+    - name: severity
+      matchType: =~
+      value: "critical|warning"
+    receiver: sns-notification
+    repeatInterval: 12h
+  receivers:
+    sns_configs:
+    - sigv4:
+        region: eu-central-1
+      topicARN: arn:aws:sns:eu-central-1:550573419865:grafana-alerts-to-teams
+      subject: '[DEV] | [{{ .Status | toUpper }}{{ if eq .Status "firing" }}: {{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }} | severity: {{ .CommonLabels.severity }}'
+      message: |
+        {{ range .Alerts -}}
+        {{ if eq .Status "firing" }}
+        🚨🔥 **ALERT FIRED** 🚨🔥
+        {{ else }}
+        ✅🟢 **ALERT RESOLVED** ✅🟢
+        {{ end }}
+        Description: {{ .Annotations.description }}
+        Summary: {{ .Annotations.summary }}
+        {{ if .Annotations.runbook_url }}Runbook: {{ .Annotations.runbook_url }}{{ end }}
+        Severity: {{ .Labels.severity }}
+        Fired at: {{ .StartsAt }}
+
+        Generator URL: {{ .GeneratorURL }}
+        {{ end }}

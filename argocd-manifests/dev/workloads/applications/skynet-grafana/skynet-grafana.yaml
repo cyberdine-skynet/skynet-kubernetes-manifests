@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: skynet-iac-grafana
+  namespace: argo
+spec:
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: prometheus
+  project: default
+  source:
+    repoURL: 'https://github.com/Francescoeman/skynet-iac-grafana'
+    path: tanka
+    targetRevision: HEAD
+    plugin:
+      name: tanka-v0.26.0
+      env:
+      - name: TK_ENV
+        value: dev

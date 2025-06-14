@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: onetime-app-of-apps
+  namespace: argo
+spec:
+  syncPolicy:
+    automated: {}
+  destination:
+    namespace: argo
+    server: https://kubernetes.default.svc
+  project: default
+  sources:
+  - path: argocd-apps/dev
+    repoURL: https://github.com/Francescoeman/onetime.git
+    targetRevision: HEAD
+    directory:
+      recurse: true

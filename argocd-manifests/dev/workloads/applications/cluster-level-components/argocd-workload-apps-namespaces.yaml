@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-workload-apps-namespaces
+  namespace: argo
+spec:
+  syncPolicy:
+    automated: {}
+  destination:
+    namespace: argo
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: app-manifests/argocd-workload-apps-namespaces/dev
+    repoURL: https://github.com/Francescoeman/skynet-kubernetes-manifests.git
+    targetRevision: HEAD
