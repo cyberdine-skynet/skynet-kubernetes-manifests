@@ -11,7 +11,7 @@ spec:
     targetRevision: 1.0.41
     helm:
       valueFiles:
-      - $values//helm-values/portainer-values.yaml
+      - $values//helm-values/portainer/portainer-values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: portainer
