@@ -8,7 +8,7 @@ spec:
     namespace: argocd
   source:
     path: apps
-    repoURL: 'https://github.com/cyberdine/talos-kubernetes-manifests'
+    repoURL: 'https://github.com/cyberdine-skynet/skynet-kubernetes-manifests'
     targetRevision: HEAD
   project: default
   # syncPolicy:
