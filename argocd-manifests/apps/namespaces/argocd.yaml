@@ -1,0 +1,7 @@
+metadata:
+  name: namespaces
+  namespace: argocd
+...
+destination:
+  server: https://kubernetes.default.svc
+  namespace: argocd

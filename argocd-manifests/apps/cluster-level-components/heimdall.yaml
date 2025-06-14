@@ -30,7 +30,5 @@ spec:
     automated:
       prune: true
       selfHeal: true
-      syncOptions:
-      - CreateNamespace=true
 
 # filepath: /Users/f.emanuele/Documents/talos-kubernetes-manifests/apps/heimdall.yaml
