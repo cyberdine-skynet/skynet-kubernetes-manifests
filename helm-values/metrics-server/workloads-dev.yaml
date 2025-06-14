@@ -1,0 +1,13 @@
+metrics:
+  enabled: true
+
+serviceMonitor:
+  enabled: true
+
+commonLabels:
+  team: "team-platform"
+  env: "dev"
+
+podLabels:
+  team: "team-platform"
+  env: "dev"
