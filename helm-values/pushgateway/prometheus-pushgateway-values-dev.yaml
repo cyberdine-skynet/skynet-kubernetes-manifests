@@ -16,7 +16,7 @@ ingress:
     alb.ingress.kubernetes.io/scheme: internal
     alb.ingress.kubernetes.io/target-type: ip
   hosts:
-  - pushgateway.workloads-euc1.dev.skynet.cloud
+  - pushgateway.fle.api64.de
 
 additionalLabels:
   team: "team-platform"

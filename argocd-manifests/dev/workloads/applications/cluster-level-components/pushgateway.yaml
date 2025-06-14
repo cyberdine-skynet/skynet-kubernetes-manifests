@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: pushgateway
-  namespace: argo
+  namespace: argocd
   labels:
     app.kubernetes.io/name: pushgateway
     app.kubernetes.io/part-of: cluster-level-components
