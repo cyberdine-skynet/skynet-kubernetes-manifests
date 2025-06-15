@@ -11,7 +11,7 @@ spec:
     targetRevision: 8.5.1
     helm:
       valueFiles:
-      - skynet-kubernetes-manifests/apps/heimdall-values.yaml
+      - apps/heimdall-values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: dashboard
