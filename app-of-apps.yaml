@@ -11,3 +11,7 @@ spec:
     repoURL: 'https://github.com/cyberdine-skynet/skynet-kubernetes-manifests'
     targetRevision: HEAD
   project: default
+  # syncPolicy:
+  #   automated:
+  #     prune: true
+  #     selfHeal: true
