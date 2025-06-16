@@ -1,27 +1,55 @@
-ports:
-  web:
-    port: 80
-    expose: true
-    exposedPort: 80
-  websecure:
-    port: 443
-    expose: true
-    exposedPort: 443
-
 ingressRoute:
   dashboard:
     enabled: true
 
-service:
-  type: NodePort
-  spec:
-    externalTrafficPolicy: Local
-    ports:
-    - port: 80
-      nodePort: 30080
-    - port: 443
-      nodePort: 30443
+ports:
+  web:
+    expose: true
+    exposedPort: 80
+    protocol: TCP
+  websecure:
+    expose: true
+    exposedPort: 443
+    protocol: TCP
 
+# EntryPoints config
 additionalArguments:
-- "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-- "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+- "--entrypoints.web.address=:80"
+- "--entrypoints.websecure.address=:443"
+- "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+- "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+- "--certificatesresolvers.le.acme.tlschallenge=true"
+- "--certificatesresolvers.le.acme.email=admin@fle.api64.de"
+- "--certificatesresolvers.le.acme.storage=/data/acme.json"
+- "--certificatesresolvers.le.acme.httpchallenge.entrypoint=web"
+
+# Enable TLS & Let's Encrypt
+certResolvers:
+  le:
+    acme:
+      email: francescoemanuele32@gmail.com
+      storage: /data/acme.json
+      tlsChallenge: true
+
+# Enable persistence
+persistence:
+  enabled: true
+  path: /data
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+# Middleware for host-based routing
+providers:
+  kubernetesCRD:
+    enabled: true
+  kubernetesIngress:
+    enabled: true
+
+  additionalArguments:
+  - "--entrypoints.web.address=:80"
+  - "--entrypoints.websecure.address=:443"
+  - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+  - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+  - "--certificatesresolvers.le.acme.tlschallenge=true"
+  - "--certificatesresolvers.le.acme.email=admin@fle.api64.de"
+  - "--certificatesresolvers.le.acme.storage=/data/acme.json"
