@@ -11,7 +11,7 @@ spec:
     path: apps/homepage-dashboard/homepage-dashboard-app.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: dashboard
+    namespace: homepage
   syncPolicy:
     automated:
       prune: true
