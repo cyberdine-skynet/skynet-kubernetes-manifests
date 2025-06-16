@@ -11,7 +11,7 @@ spec:
     targetRevision: 27.0.0
     helm:
       values: |
-        # inline or reference from helm-values/traefik.yaml using `valueFiles`
+        - helm-values/traefik-values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik

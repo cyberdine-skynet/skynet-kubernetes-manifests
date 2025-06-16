@@ -32,12 +32,13 @@ certResolvers:
       tlsChallenge: true
 
 # Enable persistence
-persistence:
-  enabled: true
-  path: /data
-  accessMode: ReadWriteOnce
-  size: 1Gi
-
+service:
+  type: NodePort
+  ports:
+    web:
+      nodePort: 30080
+    websecure:
+      nodePort: 30443
 # Middleware for host-based routing
 providers:
   kubernetesCRD:
