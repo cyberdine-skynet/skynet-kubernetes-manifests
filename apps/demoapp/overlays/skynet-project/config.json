@@ -1,0 +1,11 @@
+{
+  "appName": "demoapp",
+  "userGivenName": "demoapp",
+  "destNamespace": "default",
+  "destServer": "https://kubernetes.default.svc",
+  "srcPath": "apps/demoapp/overlays/skynet-project",
+  "srcRepoURL": "https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git",
+  "srcTargetRevision": "",
+  "labels": null,
+  "annotations": null
+}
