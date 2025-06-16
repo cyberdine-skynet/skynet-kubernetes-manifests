@@ -1,5 +1,0 @@
-# filepath: apps/homepage-dashboard/base/kustomization.yaml
-resources:
-
-- deployment.yaml
-- service.yaml
