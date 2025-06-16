@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git'
     targetRevision: main
-    path: argocd/applications
+    path: argocd/apps
     directory:
       recurse: false
   destination:
