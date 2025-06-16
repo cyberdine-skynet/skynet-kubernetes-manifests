@@ -7,7 +7,7 @@ spec:
   entryPoints:
   - web
   routes:
-  - match: Host(`traefik.fle.api64.de`)
+  - match: Host(`traefik.fle.api64.de`) || PathPrefix(`/dashboard`) || PathPrefix(`/api`)
     kind: Rule
     services:
     - name: traefik
