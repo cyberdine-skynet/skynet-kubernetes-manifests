@@ -9,10 +9,10 @@ spec:
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
-    targetRevision: 58.2.2 # Use the desired chart version
+    targetRevision: 66.3.1 # Use the desired chart version
     helm:
       valueFiles:
-      - ../../../helm-values/kube-prometheus-stack.yaml
+      - helm-values/kube-promethes-stack/kube-prometheus-stack.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: prometheus
