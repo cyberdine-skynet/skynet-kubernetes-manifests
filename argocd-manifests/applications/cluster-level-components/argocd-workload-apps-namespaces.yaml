@@ -13,4 +13,4 @@ spec:
   source:
     path: app-manifests/argocd-workload-apps-namespaces
     repoURL: https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git
-    targetRevision: main
+    targetRevision: HEAD

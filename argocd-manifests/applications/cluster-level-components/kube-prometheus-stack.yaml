@@ -1,3 +1,4 @@
+# filepath: argocd-manifests/applications/cluster-level-components/kube-prometheus-stack.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -6,14 +7,14 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git
-    targetRevision: main
+    repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
+    targetRevision: 58.2.2 # Use the desired chart version
     helm:
       valueFiles:
-      - helm-values/kube-prometheus-stack/kube-prometheus-stack.yaml
+      - ../../../helm-values/kube-prometheus-stack.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: monitoring
+    namespace: prometheus
   syncPolicy:
     automated: {}

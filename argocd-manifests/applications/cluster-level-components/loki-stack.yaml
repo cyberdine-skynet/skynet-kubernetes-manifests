@@ -7,13 +7,13 @@ spec:
   project: default
   source:
     repoURL: https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git
-    targetRevision: main
+    targetRevision: HEAD
     chart: loki-stack
     helm:
       valueFiles:
       - helm-values/loki-stack/loki-stack.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: monitoring
+    namespace: prometheus
   syncPolicy:
     automated: {}

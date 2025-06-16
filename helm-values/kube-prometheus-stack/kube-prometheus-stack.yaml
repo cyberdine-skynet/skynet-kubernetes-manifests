@@ -5,4 +5,9 @@ alertmanager:
   service:
     type: ClusterIP
 grafana:
-  enabled: false
+  enabled: true
+  service:
+    type: NodePort # or ClusterIP, as needed
+    nodePort: 32000 # optional, only if you want NodePort
+  adminUser: admin
+  adminPassword: admin
