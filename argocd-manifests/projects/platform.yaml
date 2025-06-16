@@ -1,0 +1,71 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: platform
+  namespace: argo
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: platform team Project
+  sourceNamespaces:
+  - argocd-apps-team-platform
+  sourceRepos:
+  - https://github.com/sonnen/platform-kubernetes-manifests
+  destinations:
+  - namespace: platform
+    server: https://kubernetes.default.svc
+    name: in-cluster
+  - namespace: kafka
+    server: https://kubernetes.default.svc
+    name: in-cluster
+  clusterResourceWhitelist:
+  - group: ''
+    kind: Namespace
+
+  # Allow creating only below namespace-scoped resources
+  namespaceResourceWhitelist:
+  - group: 'argoproj.io'
+    kind: Application
+  - group: 'apps'
+    kind: Deployment
+  - group: ''
+    kind: Pod
+  - group: 'apps'
+    kind: ReplicaSet
+  - group: 'apps'
+    kind: StatefulSet
+  - group: ''
+    kind: Service
+  - group: networking.k8s.io
+    kind: Ingress
+  - group: ''
+    kind: ServiceAccount
+  - group: 'external-secrets.io'
+    kind: ExternalSecret
+  - group: 'external-secrets.io'
+    kind: SecretStore
+  - group: 'monitoring.coreos.com'
+    kind: ServiceMonitor
+  - group: ''
+    kind: PersistentVolumeClaim
+  - group: kafka.strimzi.io
+    kind: KafkaTopic
+  - group: kafka.incubly.oss
+    kind: KafkaSchema
+
+  roles:
+  - name: app-manager
+    description: Privileges to platform team applications
+    policies:
+    - p, proj:platform:app-manager, applications, *, platform/argocd-apps-team-platform/*, allow
+    - p, proj:platform:app-manager, exec, create, platform/argocd-apps-team-platform/*, allow
+    groups:
+    - Chromosphere-Team-Platform
+    - d47e0df0-b985-49e0-a4f6-082ad5f24821
+
+  # By default, apps may sync to any cluster specified under the `destinations` field, even if they are not
+  # scoped to this project. Set the following field to `true` to restrict apps in this cluster to only clusters
+  # scoped to this project.
+  # In Our case, we have a single cluster for all projects so we can't scope it.
+  permitOnlyProjectScopedClusters: false
+  
