@@ -1,0 +1,12 @@
+# Expose Grafana via NodePort
+service:
+  type: NodePort
+  nodePort: 32000 # You can choose any available port in the NodePort range (default: 30000-32767)
+
+# Set admin credentials (for demo/testing; use secrets for production)
+adminUser: admin
+adminPassword: admin
+
+# Ingress (disabled since you use NodePort)
+ingress:
+  enabled: false

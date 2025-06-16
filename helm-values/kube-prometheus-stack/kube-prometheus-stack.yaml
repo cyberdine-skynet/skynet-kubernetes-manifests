@@ -1,0 +1,8 @@
+prometheus:
+  service:
+    type: ClusterIP
+alertmanager:
+  service:
+    type: ClusterIP
+grafana:
+  enabled: false

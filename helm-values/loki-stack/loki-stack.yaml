@@ -1,0 +1,4 @@
+loki:
+  service:
+    type: NodePort
+    nodePort: 32003
