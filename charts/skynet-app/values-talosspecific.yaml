@@ -1,0 +1,8 @@
+replicaCount: 1
+nodeSelector:
+  kubernetes.io/os: linux
+tolerations:
+  - key: "node.kubernetes.io/not-ready"
+    operator: "Exists"
+    effect: "NoExecute"
+    

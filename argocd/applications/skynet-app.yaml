@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: skynet-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git'
+    targetRevision: main
+    chart: skynet-app
+    helm:
+      valueFiles:
+        - charts/skynet-app/values.yaml
+        - charts/skynet-app/values-talosspecific.yaml
+      ignoreMissingValueFiles: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
