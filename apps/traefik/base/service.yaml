@@ -1,19 +1,12 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: traefik
 spec:
-  selector:
-    app: traefik
   ports:
   - name: web
     protocol: TCP
     port: 80
     targetPort: 80
-    nodePort: 30080
+    nodePort: 30081 # <-- use a free port
   - name: websecure
     protocol: TCP
     port: 443
     targetPort: 443
     nodePort: 30444
-  type: NodePort
