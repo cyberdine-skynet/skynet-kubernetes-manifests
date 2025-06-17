@@ -2,7 +2,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: homarr
-  namespace: dashboard
+  namespace: dashboard # this is where your Middleware or TLSOption should live
 spec:
   entryPoints:
   - web
