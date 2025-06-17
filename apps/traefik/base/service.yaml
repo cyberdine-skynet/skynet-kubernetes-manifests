@@ -16,4 +16,7 @@ spec:
     port: 443
     targetPort: 443
     nodePort: 30444
-  type: NodePort
+    type: NodePort
+  - name: dashboard
+    port: 8080
+    targetPort: 8080
