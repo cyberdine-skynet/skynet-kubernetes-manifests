@@ -6,7 +6,7 @@ metadata:
 spec:
   project: skynet-project
   source:
-    repoURL: https://komodorio.github.io/helm-dashboard/
+    repoURL: https://helm-charts.komodor.io
     chart: helm-dashboard
     targetRevision: 1.4.4
     helm:
