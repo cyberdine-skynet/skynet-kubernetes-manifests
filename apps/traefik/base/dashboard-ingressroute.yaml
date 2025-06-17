@@ -8,18 +8,8 @@ spec:
   - web
   - websecure
   routes:
-routes:
-- match: PathPrefix(`/dashboard`)
-  kind: Rule
-  middlewares:
-  - name: dashboard-auth
-  services:
-  - name: traefik
-    port: 8080
-- match: PathPrefix(`/api`)
-  kind: Rule
-  middlewares:
-  - name: dashboard-auth
-  services:
-  - name: traefik
-    port: 8080
+  - match: Host(`traefik.fle.api54.de`) && PathPrefix(`/dashboard`)
+    kind: Rule
+    services:
+    - name: traefik
+      port: 8080
