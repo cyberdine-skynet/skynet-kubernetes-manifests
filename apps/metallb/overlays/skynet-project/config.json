@@ -1,10 +1,10 @@
 {
-  "appName": "metallb",
-  "userGivenName": "metallb",
-  "destNamespace": "metallb-system",
+  "appName": "demoapp",
+  "userGivenName": "demoapp",
+  "destNamespace": "default",
   "destServer": "https://kubernetes.default.svc",
   "srcPath": "apps/metallb/overlays/skynet-project",
-  "srcRepoURL": "https://github.com/tomaszbawor/homelab-argo.git",
+  "srcRepoURL": "https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git",
   "srcTargetRevision": "",
   "labels": null,
   "annotations": null
