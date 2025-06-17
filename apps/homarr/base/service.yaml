@@ -1,11 +1,15 @@
-apiVersion: v1
-kind: Service
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
 metadata:
   name: homarr
+  namespace: dashboard
 spec:
-  selector:
-    app: homarr
-  ports:
-  - protocol: TCP
-    port: 7575
-    targetPort: 7575
+  entryPoints:
+  - web
+  - websecure
+  routes:
+  - match: Host(`homarr.fle.api64.de`)
+    kind: Rule
+    services:
+    - name: homarr
+      port: 7575
