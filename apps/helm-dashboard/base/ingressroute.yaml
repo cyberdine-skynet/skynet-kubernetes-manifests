@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: helm-dashboard
+  namespace: helm-dashboard
+spec:
+  entryPoints:
+  - web
+  - websecure
+  routes:
+  - match: Host(`helm-dashboard.fle.api54.de`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: helm-dashboard
+      port: 8080
+  tls:
+    certResolver: default
