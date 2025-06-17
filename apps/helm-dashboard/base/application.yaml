@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://helm-charts.komodor.io
     chart: helm-dashboard
-    targetRevision: 1.4.4
+    targetRevision: 2.0.3
     helm:
       values: |
         service:
