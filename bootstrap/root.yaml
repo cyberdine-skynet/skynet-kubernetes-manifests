@@ -22,8 +22,6 @@ spec:
   source:
     path: projects
     repoURL: https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git
-    kustomize:
-      enableHelm: true
   syncPolicy:
     automated:
       allowEmpty: true
