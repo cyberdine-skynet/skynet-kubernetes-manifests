@@ -10,6 +10,8 @@ spec:
   routes:
   - match: PathPrefix(`/dashboard`) || PathPrefix(`/api`)
     kind: Rule
+    middlewares:
+    - name: dashboard-auth
     services:
     - name: traefik
       port: 8080
