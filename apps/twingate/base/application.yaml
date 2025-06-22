@@ -6,14 +6,11 @@ metadata:
 spec:
   project: skynet-project
   source:
-    repoURL: "oci://ghcr.io/twingate/helmcharts"
-    chart: twingate-operator
-    targetRevision: "0.22.3" # latest published release  [oai_citation:0‡helm.sh](https://helm.sh/docs/topics/registries/?utm_source=chatgpt.com)
-    helm:
-      valueFiles:
-      - values.yaml
+    repoURL: ghcr.io
+    chart: helmcharts/twingate-operator
+    targetRevision: "0.22.3"
   destination:
-    server: "https://kubernetes.default.svc"
+    server: https://kubernetes.default.svc
     namespace: twingate
   syncPolicy:
     automated:
