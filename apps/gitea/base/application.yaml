@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitea
+  namespace: argocd
+spec:
+  project: skynet-project
+  source:
+    repoURL: https://dl.gitea.io/charts/
+    chart: gitea
+    targetRevision: 10.1.2 # Use the latest version from ArtifactHub
+    helm:
+      values: |
+        service:
+          http:
+            type: NodePort
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gitea
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
