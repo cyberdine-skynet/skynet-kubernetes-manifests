@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://twingate.github.io/helm-charts
     chart: twingate-operator
-    targetRevision: 1.1.1 # Use the latest version from ArtifactHub
+    targetRevision: 0.1.16 # Use the latest version from ArtifactHub
     helm:
       values: |
         # Add custom Helm values here if needed
