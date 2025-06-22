@@ -1,0 +1,11 @@
+{
+  "appName": "twingate-operator",
+  "userGivenName": "twingate-operator",
+  "destNamespace": "twingate",
+  "destServer": "https://kubernetes.default.svc",
+  "srcPath": "apps/twingate/overlays/skynet-project",
+  "srcRepoURL": "https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git",
+  "srcTargetRevision": "",
+  "labels": null,
+  "annotations": null
+}
