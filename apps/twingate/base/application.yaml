@@ -6,11 +6,14 @@ metadata:
 spec:
   project: skynet-project
   source:
-    repoURL: ghcr.io
-    chart: helmcharts/twingate-operator
+    repoURL: "ghcr.io"
+    chart: "helmcharts/twingate-operator"
     targetRevision: "0.22.3"
+    helm:
+      valueFiles:
+      - values.yaml
   destination:
-    server: https://kubernetes.default.svc
+    server: "https://kubernetes.default.svc"
     namespace: twingate
   syncPolicy:
     automated:
