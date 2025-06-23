@@ -3,6 +3,8 @@ kind: Secret
 metadata:
   name: argocd-github-client-id
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/secret-type: oidc
 type: Opaque
 stringData:
   clientID: 63aa9d1ef40194ca173c

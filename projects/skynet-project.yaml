@@ -6,13 +6,13 @@ metadata:
     argocd.argoproj.io/sync-options: PruneLast=true
     argocd.argoproj.io/sync-wave: "-2"
   creationTimestamp: null
-  name: skynet-project
+  name: skynet-dev
   namespace: argocd
 spec:
   clusterResourceWhitelist:
   - group: '*'
     kind: '*'
-  description: skynet-project project
+  description: skynet-dev project
   destinations:
   - namespace: '*'
     server: '*'
@@ -29,7 +29,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
   creationTimestamp: null
-  name: skynet-project
+  name: skynet-dev
   namespace: argocd
 spec:
   generators:
@@ -68,7 +68,7 @@ spec:
       labels:
         app.kubernetes.io/managed-by: argocd-autopilot
         app.kubernetes.io/name: '{{ appName }}'
-      name: skynet-project-{{ userGivenName }}
+      name: skynet-dev-{{ userGivenName }}
       namespace: argocd
     spec:
       destination:
@@ -79,7 +79,7 @@ spec:
         jsonPointers:
         - /status
         kind: Application
-      project: skynet-project
+      project: skynet-dev
       source:
         path: '{{ srcPath }}'
         repoURL: '{{ srcRepoURL }}'

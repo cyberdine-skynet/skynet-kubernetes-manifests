@@ -4,7 +4,7 @@ namespace: argocd
 
 resources:
 - github.com/argoproj-labs/argocd-autopilot/manifests/base?ref=v0.4.19
-
+- argocd-service.yaml
 configMapGenerator:
 - name: argocd-cm
   behavior: merge
