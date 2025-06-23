@@ -3,7 +3,7 @@
   "userGivenName": "grafana",
   "destNamespace": "monitoring",
   "destServer": "https://kubernetes.default.svc",
-  "srcPath": "apps/grafana/overlays/skynet-project",
+  "srcPath": "apps/monitoring/grafana/overlays/dev",
   "srcRepoURL": "https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git",
   "srcTargetRevision": "",
   "labels": null,
