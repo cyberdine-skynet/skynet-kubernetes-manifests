@@ -26,7 +26,31 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /etc/grafana/provisioning
+        - name: dashboards
+          mountPath: /tmp/dashboards
+      - name: grafana-sc-dashboard
+        image: kiwigrid/k8s-sidecar:latest
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        env:
+        - name: LABEL
+          value: "grafana_dashboard"
+        - name: LABEL_VALUE
+          value: "1"
+        - name: FOLDER
+          value: "/tmp/dashboards"
+        volumeMounts:
+        - name: dashboards
+          mountPath: /tmp/dashboards
+      restartPolicy: Always
       volumes:
       - name: config
         configMap:
           name: grafana-config
+      - name: dashboards
+        emptyDir: {}
