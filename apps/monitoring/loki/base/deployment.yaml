@@ -20,6 +20,12 @@ spec:
         volumeMounts:
         - name: loki-pvc
           mountPath: /loki
+      - name: fix-perms
+        image: busybox
+        command: [ "sh", "-c", "chown -R 10001:10001 /loki" ]
+        volumeMounts:
+        - name: loki-pvc
+          mountPath: /loki
       containers:
       - name: loki
         image: grafana/loki:2.9.3
@@ -34,6 +40,8 @@ spec:
           limits:
             cpu: "500m"
             memory: "512Mi"
+        securityContext:
+          runAsUser: 10001
         volumeMounts:
         - name: loki-pvc
           mountPath: /loki
