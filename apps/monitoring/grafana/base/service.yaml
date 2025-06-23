@@ -4,9 +4,10 @@ metadata:
   name: grafana
   namespace: monitoring
 spec:
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000
+    nodePort: 32000 # You can choose a port between 30000-32767
   selector:
     app: grafana
-  ports:
-  - protocol: TCP
-    port: 3000
-    targetPort: 3000
