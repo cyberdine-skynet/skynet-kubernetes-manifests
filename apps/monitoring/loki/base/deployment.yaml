@@ -18,22 +18,21 @@ spec:
         image: grafana/loki:2.9.3
         args:
         - -config.file=/etc/loki/loki-config.yaml
+        volumeMounts:
+        - name: loki-pvc
+          mountPath: /loki
+        # ...other container settings...
+        ports:
+        - containerPort: 3100
+        env: []
         resources:
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: "100m"
+            memory: "128Mi"
           limits:
-            cpu: 500m
-            memory: 512Mi
-        volumeMounts:
-        - name: config
-          mountPath: /etc/loki
-        - name: loki-storage
-          mountPath: /var/loki
+            cpu: "500m"
+            memory: "512Mi"
       volumes:
-      - name: config
-        configMap:
-          name: loki-config
-      - name: loki-storage
+      - name: loki-pvc
         persistentVolumeClaim:
           claimName: loki-pvc
