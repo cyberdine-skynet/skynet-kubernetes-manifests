@@ -1,17 +1,17 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: helm-dashboard
-  namespace: helm-dashboard
+  name: grafana
+  namespace: monitoring
 spec:
   entryPoints:
   - web
   - websecure
   routes:
-  - match: Host(`helm-dashboard.fle.api54.de`) && PathPrefix(`/`)
+  - match: Host(`grafana.fle.api64.de`)
     kind: Rule
     services:
-    - name: helm-dashboard
-      port: 8080
+    - name: grafana
+      port: 3000
   tls:
     certResolver: default

@@ -1,0 +1,11 @@
+{
+  "appName": "fluent-bit",
+  "userGivenName": "fluent-bit",
+  "destNamespace": "monitoring",
+  "destServer": "https://kubernetes.default.svc",
+  "srcPath": "apps/fluent-bit/overlays/skynet-project",
+  "srcRepoURL": "https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git",
+  "srcTargetRevision": "",
+  "labels": null,
+  "annotations": null
+}
