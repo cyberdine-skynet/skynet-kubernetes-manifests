@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argocd-github-client-id
+  namespace: argocd
+type: Opaque
+stringData:
+  clientID: 63aa9d1ef40194ca173c
