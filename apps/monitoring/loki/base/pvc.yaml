@@ -1,11 +1,10 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: loki-storage
-  namespace: monitoring
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
+volumes:
+- name: my-volume
+  persistentVolumeClaim:
+    claimName: my-pvc
+
+containers:
+- name: my-app
+  volumeMounts:
+  - mountPath: /data
+    name: my-volume
