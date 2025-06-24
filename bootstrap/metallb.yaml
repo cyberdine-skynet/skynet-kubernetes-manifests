@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git'
     targetRevision: HEAD
-    path: /apps/metallb/overlays/dev
+    path: apps/metallb/
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: metallb-system
