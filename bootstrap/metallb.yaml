@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/your-org/your-repo'
+    repoURL: 'https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git'
     targetRevision: HEAD
-    path: cluster-resources/metallb
+    path: apps/metallb/
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: metallb-system
