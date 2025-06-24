@@ -12,14 +12,14 @@ spec:
     port: 80
     targetPort: 80
     protocol: TCP
-    nodePort: 30080 # Puoi scegliere un valore tra 30000-32767 o lasciare che Kubernetes lo assegni
+    nodePort: 30080
   - name: websecure
     port: 443
     targetPort: 443
     protocol: TCP
-    nodePort: 30443 # Puoi scegliere un valore tra 30000-32767 o lasciare che Kubernetes lo assegni
+    nodePort: 30443
   - name: dashboard
-    port: 8080
-    targetPort: 8080
+    port: 9000 # Changed from 8080 to 9000
+    targetPort: 9000 # Changed from 8080 to 9000
     protocol: TCP
-    nodePort: 30808
+    nodePort: 30900
