@@ -5,3 +5,4 @@ resources:
 - metallb-speaker.yaml 
 - metallb-deployment.yaml 
 - serviceaccount.yaml
+- rbac.yaml
