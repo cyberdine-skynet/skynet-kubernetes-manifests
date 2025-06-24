@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: iac-grafana
+  namespace: argocd
+spec:
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: prometheus
+  project: default
+  source:
+    repoURL: 'https://github.com/cyberdine-skynet/kubernetes-mixin'
+    path: tanka
+    targetRevision: HEAD
+    plugin:
+      name: tanka-v0.26.0
+      env:
+      - name: TK_ENV
+        value: dev
