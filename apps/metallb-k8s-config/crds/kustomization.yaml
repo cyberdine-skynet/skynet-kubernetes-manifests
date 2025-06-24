@@ -1,0 +1,3 @@
+resources:
+- metallb-crds-application.yaml
+- metallb-crds.yaml
