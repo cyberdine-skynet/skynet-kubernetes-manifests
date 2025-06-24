@@ -11,7 +11,7 @@ spec:
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: prometheus
-  project: default
+  project: dev
   source:
     repoURL: 'https://github.com/cyberdine-skynet/kubernetes-mixin'
     path: tanka
