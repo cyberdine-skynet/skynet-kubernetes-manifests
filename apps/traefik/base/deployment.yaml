@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: traefik
+  namespace: traefik
 spec:
   replicas: 1
   selector:
@@ -17,13 +18,25 @@ spec:
       - name: traefik
         image: traefik:v2.11
         args:
-        - --api.insecure=true
-        - --providers.kubernetescrd
         - --entrypoints.web.address=:80
         - --entrypoints.websecure.address=:443
+        - --providers.kubernetescrd
+        - --api.dashboard=true
+        - --accesslog=true
+        - --log.level=INFO
+        - --certificatesresolvers.letsencrypt.acme.email=your@email.com
+        - --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
+        - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
         ports:
-        - containerPort: 80
-        - containerPort: 8080
+        - name: web
+          containerPort: 80
+        - name: websecure
+          containerPort: 443
+        - name: admin
+          containerPort: 8080
+        volumeMounts:
+        - name: data
+          mountPath: /data
         resources:
           requests:
             cpu: 100m
@@ -40,3 +53,6 @@ spec:
           runAsUser: 65532
           seccompProfile:
             type: RuntimeDefault
+      volumes:
+      - name: data
+        emptyDir: {}
