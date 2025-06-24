@@ -10,10 +10,10 @@ spec:
     - CreateNamespace=true
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: prometheus
+    namespace: monitoring
   project: dev
   source:
-    repoURL: 'https://github.com/cyberdine-skynet/kubernetes-mixin'
+    repoURL: 'https://github.com/cyberdine-skynet/kubernetes-mixin.git'
     path: tanka
     targetRevision: HEAD
     plugin:

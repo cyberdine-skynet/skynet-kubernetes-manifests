@@ -1,0 +1,11 @@
+{
+  "appName": "metallb",
+  "userGivenName": "metallb",
+  "destNamespace": "metallb-system",
+  "destServer": "https://kubernetes.default.svc",
+  "srcPath": "skynet-kubernetes-manifests/bootstrap/cluster-resources/metallb",
+  "srcRepoURL": "https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git",
+  "srcTargetRevision": "",
+  "labels": null,
+  "annotations": null
+}
