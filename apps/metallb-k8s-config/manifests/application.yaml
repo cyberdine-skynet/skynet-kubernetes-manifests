@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metallb
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git'
+    targetRevision: HEAD
+    path: apps/metallb-k8s-config/manifests
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: metallb-system
+  syncPolicy:
+    automated: {}
