@@ -1,0 +1,6 @@
+resources:
+- metallb-configMap.yaml
+- metallb-secret.yaml
+- application.yaml
+- metallb-controller.yaml
+- metallb-speaker.yaml  
