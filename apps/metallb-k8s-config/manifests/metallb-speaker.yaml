@@ -17,5 +17,10 @@ spec:
     spec:
       serviceAccountName: metallb-speaker
       containers:
-        - name: speaker
-          image: quay.io/metallb/speaker:v0.13.12
+  - name: speaker
+    image: quay.io/metallb/speaker:v0.13.12
+    env:
+      - name: METALLB_NODE_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: spec.nodeName
