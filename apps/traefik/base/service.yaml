@@ -4,21 +4,15 @@ metadata:
   name: traefik
   namespace: traefik
 spec:
-  type: NodePort
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: web
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: websecure
   selector:
     app: traefik
-  ports:
-  - name: web
-    protocol: TCP
-    port: 80
-    targetPort: 80
-    nodePort: 30081
-  - name: websecure
-    protocol: TCP
-    port: 443
-    targetPort: 443
-    nodePort: 30444
-  - name: dashboard
-    protocol: TCP
-    port: 8080
-    targetPort: 8080
