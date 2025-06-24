@@ -5,3 +5,4 @@ resources:
 - rbac.yaml
 - dashboard-auth-secret.yaml
 - dashboard-auth-middleware.yaml
+- serviceaccount.yaml
