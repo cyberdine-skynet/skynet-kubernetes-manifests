@@ -4,3 +4,4 @@ resources:
 - metallb-controller.yaml
 - metallb-speaker.yaml 
 - metallb-deployment.yaml 
+- serviceaccount.yaml
