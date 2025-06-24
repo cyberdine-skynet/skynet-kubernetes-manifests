@@ -3,7 +3,7 @@
   "userGivenName": "metallb",
   "destNamespace": "metallb-system",
   "destServer": "https://kubernetes.default.svc",
-  "srcPath": "skynet-kubernetes-manifests/bootstrap/cluster-resources/metallb",
+  "srcPath": "skynet-kubernetes-manifests/apps/metallb/overlays/dev",
   "srcRepoURL": "https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git",
   "srcTargetRevision": "",
   "labels": null,
