@@ -6,3 +6,6 @@ resources:
 - metallb-deployment.yaml 
 - serviceaccount.yaml
 - rbac.yaml
+- metallb-addresspool.yaml
+- metallb-l2advertisement.yaml
+
