@@ -1,9 +1,0 @@
-resources:
-- metallb-configmap.yaml
-- metallb-secret.yaml
-- metallb-controller.yaml
-- metallb-speaker.yaml
-- metallb-deployment.yaml
-- serviceaccount.yaml
-- clusterrole.yaml
-- metallb-config.yaml
