@@ -24,7 +24,7 @@ spec:
         - --api.dashboard=true
         - --accesslog=true
         - --log.level=INFO
-        - --certificatesresolvers.letsencrypt.acme.email=your@email.com
+        - --certificatesresolvers.letsencrypt.acme.email=francescoemanuele32@gmail.com
         - --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
         - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
         ports:
