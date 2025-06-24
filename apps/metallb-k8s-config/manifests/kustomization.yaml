@@ -1,6 +1,6 @@
 resources:
 - metallb-configmap.yaml
 - metallb-secret.yaml
-- application.yaml
 - metallb-controller.yaml
-- metallb-speaker.yaml  
+- metallb-speaker.yaml 
+- metallb-deployment.yaml 
