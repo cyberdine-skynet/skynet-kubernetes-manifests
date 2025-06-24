@@ -2,10 +2,8 @@ resources:
 - metallb-configmap.yaml
 - metallb-secret.yaml
 - metallb-controller.yaml
-- metallb-speaker.yaml 
-- metallb-deployment.yaml 
+- metallb-speaker.yaml
+- metallb-deployment.yaml
 - serviceaccount.yaml
 - rbac.yaml
-- metallb-addresspool.yaml
-- metallb-l2advertisement.yaml
-
+- metallb-config.yaml
