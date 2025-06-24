@@ -1,25 +1,36 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik
+  namespace: traefik
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: metallb-speaker
+  name: traefik
 rules:
-  - apiGroups: [""]
-    resources: ["pods", "services", "endpoints", "nodes", "secrets", "namespaces", "configmaps"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["discovery.k8s.io"]
-    resources: ["endpointslices"]
-    verbs: ["get", "list", "watch"]
-
+- apiGroups: [ "" ]
+  resources: [ "services", "endpoints", "secrets", "pods", "nodes" ]
+  verbs: [ "get", "list", "watch" ]
+- apiGroups: [ "extensions", "networking.k8s.io" ]
+  resources: [ "ingresses", "ingressclasses" ]
+  verbs: [ "get", "list", "watch" ]
+- apiGroups: [ "traefik.containo.us" ]
+  resources: [ "middlewares", "ingressroutes", "ingressroutetcps", "ingressrouteudps", "tlsoptions", "tlsstores", "traefikservices" ]
+  verbs: [ "get", "list", "watch" ]
+- apiGroups: [ "traefik.io" ]
+  resources: [ "middlewares", "ingressroutes", "ingressroutetcps", "ingressrouteudps", "tlsoptions", "tlsstores", "traefikservices", "serverstransports" ]
+  verbs: [ "get", "list", "watch" ]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: metallb-speaker
+  name: traefik
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: metallb-speaker
+  name: traefik
 subjects:
-  - kind: ServiceAccount
-    name: metallb-speaker
-    namespace: metallb-system
+- kind: ServiceAccount
+  name: traefik
+  namespace: traefik
