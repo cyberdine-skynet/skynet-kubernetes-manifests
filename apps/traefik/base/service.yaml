@@ -6,7 +6,6 @@ metadata:
   annotations:
     argocd.argoproj.io/tracking-id: traefik:/Service:traefik
 spec:
-  type: LoadBalancer
   selector:
     app: traefik
   ports:
@@ -22,6 +21,7 @@ spec:
     port: 8080
     targetPort: 8080
     protocol: TCP
+  type: LoadBalancer # <-- This line is required for MetalLB
   externalTrafficPolicy: Cluster
   sessionAffinity: None
   ipFamilyPolicy: SingleStack
