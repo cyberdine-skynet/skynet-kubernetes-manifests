@@ -1,5 +1,5 @@
 resources:
-- metallb-configMap.yaml
+- metallb-configmap.yaml
 - metallb-secret.yaml
 - application.yaml
 - metallb-controller.yaml
