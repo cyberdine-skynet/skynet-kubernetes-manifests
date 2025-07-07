@@ -1,5 +1,0 @@
-resources:
-  - ../loki/overlays/dev
-  - ../prometheus/overlays/dev
-  - ../grafana/overlays/dev
-  - ../fluent-bit/overlays/dev

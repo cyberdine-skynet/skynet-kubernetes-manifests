@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: argocd-environments
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      - env: dev
+        namespace: dev
+        valuesFile: ../../helm-values/argocd-values-dev.yaml
+      - env: staging
+        namespace: staging
+        valuesFile: ../../helm-values/argocd-values-staging.yaml
+      - env: prod
+        namespace: prod
+        valuesFile: ../../helm-values/argocd-values-prod.yaml
+  template:
+    metadata:
+      name: argocd-{{env}}
+    spec:
+      project: { ? { env } }
+      source:
+        repoURL: https://argoproj.github.io/argo-helm
+        chart: argo-cd
+        targetRevision: 6.7.16
+        helm:
+          valueFiles:
+          - '{{valuesFile}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true

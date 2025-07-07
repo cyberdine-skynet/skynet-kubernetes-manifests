@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: skynet-app
+  namespace: argocd
+spec:
+  syncPolicy:
+    automated: {}
+  destination:
+    namespace: dev
+    server: https://kubernetes.default.svc
+  project: dev
+  sources:
+  - path: argocd-manifests/dev/workloads/applications
+    repoURL: https://github.com/cyberdine-skynet/skynet-k8s-manifests.git
+    targetRevision: HEAD
+    directory:
+      recurse: true
+  - path: argocd-manifests/dev/workloads/projects
+    repoURL: https://github.com/cyberdine-skynet/skynet-k8s-manifests.git
+    targetRevision: HEAD
+    directory:
+      recurse: true
