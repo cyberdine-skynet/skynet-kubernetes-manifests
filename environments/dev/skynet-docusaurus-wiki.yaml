@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: skynet-docs
+  namespace: argocd
+spec:
+  project: dev
+  source:
+    repoURL: https://github.com/cyberdine-skynet/skynet-docusaurus-wiki.git
+    targetRevision: HEAD
+    path: k8s-manifests/dev/docs
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true
