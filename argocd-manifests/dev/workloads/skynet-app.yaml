@@ -12,12 +12,12 @@ spec:
   project: dev
   sources:
   - path: argocd-manifests/dev/workloads/applications
-    repoURL: https://github.com/cyberdine-skynet/skynet-k8s-manifests.git
+    repoURL: https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git
     targetRevision: HEAD
     directory:
       recurse: true
   - path: argocd-manifests/dev/workloads/projects
-    repoURL: https://github.com/cyberdine-skynet/skynet-k8s-manifests.git
+    repoURL: https://github.com/cyberdine-skynet/skynet-kubernetes-manifests.git
     targetRevision: HEAD
     directory:
       recurse: true
