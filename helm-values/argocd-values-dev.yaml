@@ -1,0 +1,13 @@
+# values.yaml for Argo CD Helm chart
+server:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+    - argocd-dev.fle.api64.de
+    paths:
+    - /
+    tls: []
+configs:
+  params:
+    server.insecure: true

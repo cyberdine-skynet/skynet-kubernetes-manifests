@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    argocd.argoproj.io/secret-type: repository
+  name: argocd-repo-platform-kubernetes-manifests
+  namespace: argocd
+type: Opaque
+stringData:
+  name: platform-kubernetes-manifests
+  project: default
+  type: git
+  url: https://github.com/cyberdine-skynet/platform-kubernetes-manifests

@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: skynet-wiki
+  namespace: argocd
+spec:
+  project: dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: wiki
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+  source:
+    repoURL: https://github.com/cyberdine-skynet/skynet-wiki-manifests.git
+    path: manifests
+    targetRevision: HEAD

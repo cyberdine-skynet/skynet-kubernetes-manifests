@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-app-of-apps
+  namespace: argocd
+spec:
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true
+  destination:
+    namespace: platform
+    server: https://kubernetes.default.svc
+  project: dev
+  sources:
+  - path: argocd-apps/dev
+    repoURL: https://github.com/cyberdine-skynet/platform-kubernetes-manifests
+    targetRevision: HEAD
+    directory:
+      recurse: true
