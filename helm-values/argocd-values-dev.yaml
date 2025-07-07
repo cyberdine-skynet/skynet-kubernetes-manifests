@@ -11,3 +11,24 @@ server:
 configs:
   params:
     server.insecure: true
+dex:
+  enabled: true
+  config:
+    connectors:
+    - type: github
+      id: github
+      name: GitHub
+      config:
+        clientID: $dex.github.clientID
+        clientSecret: $dex.github.clientSecret
+        redirectURI: https://argocd-dev.fle.api64.de/api/dex/callback
+        orgs:
+        - name: cyberdine-skynet
+        - name: my-organization-with-teams
+          teams:
+          - red-team
+          - blue-team
+        teamNameField: slug
+dexSecret:
+  create: false
+  name: argocd-dex-github
