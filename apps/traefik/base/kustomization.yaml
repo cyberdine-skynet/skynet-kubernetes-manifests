@@ -1,7 +1,0 @@
-resources:
-- deployment.yaml
-- service.yaml
-- dashboard-ingressroute.yaml
-- rbac.yaml
-- dashboard-auth-secret.yaml
-- dashboard-auth-middleware.yaml
