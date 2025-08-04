@@ -1,0 +1,65 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server-ingress
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-server
+    app.kubernetes.io/component: ingress
+    app.kubernetes.io/part-of: argocd
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/grpc-backend: "true"
+    # Handle both HTTP and gRPC traffic
+    nginx.ingress.kubernetes.io/server-snippet: |
+      grpc_read_timeout 300;
+      grpc_send_timeout 300;
+      client_body_timeout 60;
+      client_header_timeout 60;
+      client_max_body_size 1m;
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - argocd.fle.api64.de
+      secretName: argocd-server-tls
+  rules:
+    - host: argocd.fle.api64.de
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 80
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argocd-server-tls
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-server-tls
+    app.kubernetes.io/component: certificate
+    app.kubernetes.io/part-of: argocd
+type: kubernetes.io/tls
+data:
+  # Self-signed certificate for now - replace with real cert
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURWekNDQWorcmdBd0lCQWdJSkFLRUUrNmpmUmtZS01BMEdDU3FHU0liM0RRRUJDd1VBTURreE56QTFCZ05WCkJBTU1MbkZ5WjI5alpDNW1iR1V1WVhCcE5qUXVaR1V3SGhjTk1qUXdPREEwTURZeE16UXlXaGNOTWpVd09EQTAKTURZeE16UXlXakE1TVRjd05RWURWUVFEREMxaGNtZHZZMlF1Wm14bExtRndhVFkwTG1SbE1JSUJJakFOQmdrcQpoa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXNKdHl6QmRrOE44ZnFkQkhFOGNpWGQ4YzB0WFJZVzRyCmRFSy9XakMzeHBtbTN5dmtoRFl5QTY4Z0p3N2w5VFFyY3NDYnc3T1JTYmZ5TnNPSmg3U0JNN1ZIZjRRNGFHQ2YKTU9yNjArOHJUSGZGVkNKNloyVVhxKzR1ZkFxbmRMbnF2VG5RbFI5eXJtSUdMMXJ2a3lSUE0yQzZkL1MreXBVcQpUem1vYllTWGVJMTQ5eVlKcVFEcExhZHpLamxYOXczcUZFNGVOT1NhM05QWjZqWXJBTG5iNmJRV29vbGZJelV1CkwwL1NPWWtxWE1vUzg2K3BRcUJheUo3WUQzaEhPZ2Z5SXlMa3ZHRFFHQjV1cUcrNzZDM3dQQU9mUndXRFNKNnEKc2kvdGV6dG9MY3FlVzNBM3l5emtDaXNLSkN5QVF5c25JOHVLSWZDSklOSVBtTkZ6endJREFRQUJvMU13VVRBZApCZ05WSFE0RUZnUVU2VVRuS0U3WjRrdFdHc21ZazNyNmlhUDdocFl3SHdZRFZSMGpCQmd3Rm9BVTZVVG5LRTdaCjRrdFdHc21ZazNyNmlhUDdocFl3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFOQmdrcWhraUc5dzBCQVFzRkFBT0MKQVFFQWpGNnA3dGE0Z3dHSXJvcHNkM25OVldkaWhyU3NyK29YdUNqR3F5Z2lsL3BvWHI2UXROR1pFSGcyc01legpLZ3U2OTVVMm5kRlZPaGVDZmwrRkE2RVZoM1JVMllVZVZmNXJCMDNGK1grUWdVVVd6K2dxTFJITlBGVDZNOEIxCkl2c2xwMnVHVzlqTWNqNVB3ZFl1ZlNJaUkyTnZNYktpMmdIZUtZc1BYWnY2VC8rNnZiY0grRXQ5SzVncFFTSlUKdUtrWk5RcGN5MFBZMW1EbGMwcVVZV2JQSGJlMHFBWmpkeWtvb1FoOHB4UE5EbGZPeHh1K2g1cEFuL1VqNFNscQoxK1cwSnkwZGptNlFPK2VBZ3dXalZEQjBGeFAzVjh1bXZTbzNEVGRNdGhxWUovQXJGUUdNOWVmRE5lWmkxdklsCmZ2REJlYnFqT0I3UEZuWWNBNWRZYVB6b3RnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2UUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktjd2dnU2pBZ0VBQW9JQkFRQ3dtM0xNRjJUdzN4K3AKMEVjVHh5SmQzeHpTMWRGaGJpdDBRcjlhTUxmR21hYmZLK1NFTmpJRHJ5QW5EdVgxTkN0eXdKdkRzNUZKdC9JMgp3NG1IdElFenRVZC9oRGhvWUo4dzZ2clQ3eXRNZDhWVUlucG5aUmVyN2k1OENxZDB1ZXE5T2RDVkgzS3VZZ1l2Cld1K1RKRTh6WUxwMzlMN0tsU3BQT2FodGhKZDRqWGozSmdtcEFPa3RwM01xT1ZmM0Rlb1VUaDQwNUpyYzA5bnEKTmlzQXVkdnB0QmFpaVY4ak5TNHZUOUk1aVNwY3loTHpyNmxDb0ZySW50Z1BlRWM2Qi9JaklTKzhZTkFZSG02bwpiN3ZvTGZBOEE1OUhCWU5JbnFxeUwrMTdPMmd0eXA1YmNEZkxMT1FLS3dva0xJQkRLeWNqeTRvaCtJa2cwZytiCjBYUFBBZ01CQUFFQ2dnRUJBSm1qa1lKOGNkdDZyUU1UWkplYUppc3NDdWNXMjFHdkx1a3FsM2NwWXFXVWJvWkoKdGR4TG1xNEpmeWxXUTdxSDFNbHc2UCtQOWphMG5lZTFaRk5ZSk9rY0pzd2VFZ0FxWEFYWnpOZ0dTVCtGdlNrbQp1eVdST1FZZjBoUGh3QkpuVTJlTGE0bGFxOGlwbFZ3SHZ0ZDZJYWJaN2RCZzBzNEdEeFRJQWU2TU8rRGQ4REVaCnMrd1I4WGFMeE5sOUVVaGZGdEVBNDVNd0YzSkVJdGpVRnJEdmJ2QVgydVFwdFVHdGU3VkN5WTNmTHQ4K1hZbHQKaDZrb0dsdzhjbHhuSVJHdGZFYzZNT0VFenMxVkZaOHZOZEkyZGpac01oN2M5UkJoRWFEYUthd2kxTXlwUjZLYQpWMWFEWnVreHJoOWtHZ3grNGVaUXR1emZzU2lZZWlxKzRLRUNnWUVBNGVmSHFVMGRhRXpJd2tza2FJNDVsSlpoCjBqNkZBNGx0aHhOZHBtSkVJZkdtVHc5UWdZOGZGaUswNDlzdGxFRGdpNEVSOUdqWDdpZHBrZHh3NVl1cHJUaXQKdUxvZVJRbUVGUGt6cFhXSnZWODBvZGZkRFBSRE10TVJydjI2d3VtZnpxTHNpclhkbm5mWGFGZUp4SEQ3QVJGKwpsS3JwOWdQT3lYWWFMVDBKSDZVQ2dZRUF5M3NZd0NZanhtN1gxOW5UOVhXZnRzcFd5eFVvVEFqSlcxZStnaTdkCjYvZjJhUUlOMDJpSmFjc1A0UGpJemFNbUNSbElYODlXVmQ2QWdNRXNHb1VOM1BTZnQwUm5GVzFSZk14QVh2Y1cKME9mNG9ZT05rQWlPVnQ3VGJpZlFBUlRCYWZSMFVTdnROdVJEOXhyMFZsOGxiSkY3U0xxWC8veWVGTWVBU2w0VQpKZEVDZ1lFQW5KQnBJZUliT1R6dGZqNGlHMEhoRGZjcytlcnhHamhrNXdqZE5DVHUyVnd4WXRhMEJTTEJpSm0yCjZHQUY5TWFwWitJUlBZcFc5ZEhOOEVnYWE3Z1lvWEhPMHRBNGdCWlN0RWtGNk1jaWxoUVFFVUFOdGdOQ0luaVMKZDA1UGZhTEpYOHNndE1SRklGNDJ1RStZakVadHRaazNuQkNzN205aG15VHZCSXdvWHdrQ2dZRUFtSjdYZVJTdAorTkJGQWc4c1R1NXJpL0VOanY5d0E0S2oxUGVtYVUvQ3UvYlJxdmk4dXFwWFBWelJqeFZvZ3NzK0szRi96b3lOCkp4NmVWTXJ6S3BibE9HMGIvOUhGUHJsajVVV0IyNWJFNG5DZXE0VFYrQ0tMb3hGTk9NdHozWm9sRllkTW9HdEgKYWhqdWt4TTlOZUk4QklXWGEvSURMRDBHUVMrUHBaN0kzT1VDZ1lFQWlOaHhGR1pGV3RBZkZDNktOWU0rOHNhMwpzZ3VtdDIzUUxzZ25SZmd1bFRZRGRVT1hhWGpiZzNDdEV6NFlSd3h0ZDBJdnZqODhWRzBjSFVTVy9GUTVlYVdqCkdHZk9wS1Bzclo2aXVDWUk5MEo1cjBjWHJyUGp2WHJPVnQ2VEpkUmlHZWZZakJXSmM4SStOOXVyaDUrL0UzSU0KZllrRVZxTEJvTXI5Nm9DekFHb
+  ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-cmd-params-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # Enable insecure mode for behind-proxy setups
+  server.insecure: "true"

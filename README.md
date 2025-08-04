@@ -1,52 +1,163 @@
 # Skynet Kubernetes Manifests
 
-Central GitOps repository implementing the "App of Apps" pattern for managing all Kubernetes applications and infrastructure components via Argo CD.
+Central GitOps repository implementing environment-based deployment pattern for managing all Kubernetes applications and infrastructure components via Argo CD.
 
 ## 🏗️ Repository Structure
 
 ```
 skynet-kubernetes-manifests/
-├── apps/                           # Application definitions
-│   ├── app-of-apps.yaml           # Root application managing all others
-│   ├── infrastructure/            # Infrastructure applications
-│   │   ├── argocd-projects.yaml   # Argo CD projects
-│   │   ├── ingress-nginx.yaml     # Ingress controller
-│   │   └── monitoring.yaml        # Monitoring stack (optional)
-│   └── applications/              # User applications
-│       └── skynet-docs.yaml       # Documentation site
-├── projects/                      # Argo CD project definitions
-│   ├── infrastructure.yaml       # Infrastructure project
-│   └── applications.yaml         # Applications project
+├── argocd-manifests/              # Environment-specific ArgoCD applications
+│   ├── dev/                       # Development environment
+│   │   ├── app-of-apps.yaml       # Root application for dev
+│   │   ├── argocd-projects.yaml   # ArgoCD projects configuration
+│   │   ├── ingress-nginx.yaml     # Ingress controller for dev
+│   │   ├── observability-stack.yaml
+│   │   ├── skynet-docs.yaml       # Documentation application
+│   │   └── workload-namespaces.yaml
+│   ├── staging/                   # Staging environment
+│   │   └── ... (same structure as dev)
+│   └── prod/                      # Production environment
+│       └── ... (same structure as dev)
+├── app-manifests/                 # Raw Kubernetes manifests
+│   ├── argocd/                    # ArgoCD configuration
+│   ├── observability-stack/      # Monitoring and observability
+│   └── workload-namespaces/       # Application namespaces
+├── helm-values/                   # Helm chart values by environment
+│   ├── ingress-nginx/
+│   │   ├── values-dev.yaml
+│   │   ├── values-staging.yaml
+│   │   └── values-prod.yaml
+│   ├── observability-stack/
+│   └── workload-namespaces/
+├── test-structure.sh              # Validation script
 └── README.md
 ```
 
 ## 🔄 GitOps Workflow
 
-### App of Apps Pattern
+### Environment-Based Pattern
 
-The **App of Apps** pattern is a GitOps best practice where:
+This repository implements an **environment-based GitOps pattern** where:
 
-1. **Root Application** (`app-of-apps.yaml`) manages all other applications
-2. **Infrastructure Applications** manage cluster-wide components
-3. **Application Applications** manage user-facing services
-4. **Projects** provide multi-tenancy and RBAC
+1. **Environment Separation**: Each environment (dev/staging/prod) has its own ArgoCD applications
+2. **App-of-Apps per Environment**: Each environment has its own root application
+3. **Shared Manifests**: Common Kubernetes manifests are stored in `app-manifests/`
+4. **Environment-Specific Values**: Helm values are separated by environment in `helm-values/`
 
 ### Deployment Flow
 
 ```mermaid
 graph TD
-    A[App of Apps] --> B[Infrastructure Apps]
-    A --> C[Application Apps]
-    B --> D[Argo CD Projects]
-    B --> E[Ingress Controller]
-    B --> F[Monitoring Stack]
-    C --> G[Skynet Docs]
-    C --> H[Other Applications]
+    subgraph "Development"
+        A1[App-of-Apps Dev] --> B1[Infrastructure Dev]
+        A1 --> C1[Applications Dev]
+    end
+    
+    subgraph "Staging"
+        A2[App-of-Apps Staging] --> B2[Infrastructure Staging]
+        A2 --> C2[Applications Staging]
+    end
+    
+    subgraph "Production"
+        A3[App-of-Apps Prod] --> B3[Infrastructure Prod]
+        A3 --> C3[Applications Prod]
+    end
+    
+    subgraph "Shared Resources"
+        D[App Manifests] 
+        E[Helm Values]
+    end
+    
+    B1 --> D
+    B2 --> D
+    B3 --> D
+    
+    B1 --> E
+    B2 --> E
+    B3 --> E
 ```
 
 ## 🚀 Getting Started
 
-### 1. Deploy App of Apps
+### 1. Deploy Environment-Specific App of Apps
+
+Choose your target environment and deploy the corresponding app-of-apps:
+
+**Development:**
+
+```bash
+kubectl apply -f argocd-manifests/dev/app-of-apps.yaml
+```
+
+**Staging:**
+
+```bash
+kubectl apply -f argocd-manifests/staging/app-of-apps.yaml
+```
+
+**Production:**
+
+```bash
+kubectl apply -f argocd-manifests/prod/app-of-apps.yaml
+```
+
+### 2. Verify Deployment
+
+Check that all applications are synchronized:
+
+```bash
+# Check application status
+kubectl get applications -n argocd
+
+# Monitor sync status
+argocd app list
+
+# View specific application
+argocd app get app-of-apps-dev
+```
+
+## 🧪 Testing
+
+Run the comprehensive test suite:
+
+```bash
+./test-structure.sh
+```
+
+This script validates:
+
+- ✅ YAML syntax across all files
+- ✅ Kubernetes resource validation
+- ✅ Helm template rendering
+- ✅ Directory structure consistency
+- ✅ Environment consistency
+- ✅ Git repository status
+
+## 🔄 Migration from App-of-Apps Pattern
+
+This repository has been refactored from the traditional App-of-Apps pattern to an environment-based approach for:
+
+- **Better Environment Isolation**: Each environment is completely independent
+- **Easier Rollbacks**: Environment-specific rollbacks without affecting others
+- **Clearer Separation**: Environment-specific configurations are explicit
+- **Scalable Growth**: Easy to add new environments (e.g., qa, uat)
+
+## �️ Environment Differences
+
+| Feature | Development | Staging | Production |
+|---------|-------------|---------|------------|
+| Service Type | NodePort | LoadBalancer | LoadBalancer |
+| Resource Limits | Low | Medium | High |
+| Autoscaling | Disabled | Disabled | Enabled |
+| Monitoring Retention | 7 days | 30 days | 90 days |
+| Backup Strategy | None | Weekly | Daily |
+
+## 🤝 Contributing
+
+1. Create a feature branch from `main`
+2. Make your changes
+3. Run `./test-structure.sh` to validate
+4. Submit a pull request
 
 Apply the root application to Argo CD:
 

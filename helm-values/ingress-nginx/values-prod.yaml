@@ -1,0 +1,28 @@
+controller:
+  # Production configuration with LoadBalancer
+  service:
+    type: LoadBalancer
+  # Enhanced resource configuration for production
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  # Enable metrics and monitoring
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  # Production-ready configuration
+  config:
+    use-forwarded-headers: "true"
+    compute-full-forwarded-for: "true"
+    use-proxy-protocol: "false"
+  # Enable autoscaling
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70

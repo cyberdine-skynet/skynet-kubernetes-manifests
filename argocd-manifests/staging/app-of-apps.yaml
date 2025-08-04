@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-of-apps-staging
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: app-of-apps
+    app.kubernetes.io/component: gitops
+    app.kubernetes.io/part-of: skynet-platform
+    app.kubernetes.io/environment: staging
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/cyberdine-skynet/skynet-kubernetes-manifests
+    targetRevision: main
+    path: argocd-manifests/staging
+    directory:
+      recurse: true
+      include: '*.yaml'
+      exclude: 'app-of-apps.yaml'
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  revisionHistoryLimit: 3

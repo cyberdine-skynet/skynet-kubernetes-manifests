@@ -1,0 +1,84 @@
+# Development Environment Namespaces
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: skynet-dev
+  labels:
+    name: skynet-dev
+    environment: development
+    team: platform
+    app.kubernetes.io/name: skynet-dev
+    app.kubernetes.io/part-of: skynet-platform
+    app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: skynet-staging
+  labels:
+    name: skynet-staging
+    environment: staging
+    team: platform
+    app.kubernetes.io/name: skynet-staging
+    app.kubernetes.io/part-of: skynet-platform
+    app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: skynet-prod
+  labels:
+    name: skynet-prod
+    environment: production
+    team: platform
+    app.kubernetes.io/name: skynet-prod
+    app.kubernetes.io/part-of: skynet-platform
+    app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+---
+# Monitoring and Observability
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    name: monitoring
+    component: observability
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/part-of: skynet-platform
+    app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+---
+# Logging
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: logging
+  labels:
+    name: logging
+    component: observability
+    app.kubernetes.io/name: logging
+    app.kubernetes.io/part-of: skynet-platform
+    app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+---
+# Security and Policy
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: security
+  labels:
+    name: security
+    component: security
+    app.kubernetes.io/name: security
+    app.kubernetes.io/part-of: skynet-platform
+    app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
