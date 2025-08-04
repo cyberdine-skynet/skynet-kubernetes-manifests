@@ -1,0 +1,63 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: infrastructure
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: infrastructure-project
+    app.kubernetes.io/part-of: skynet-platform
+spec:
+  description: Infrastructure project for cluster-wide components
+  # Source repositories that applications in this project can use
+  sourceRepos:
+    - 'https://github.com/cyberdine-skynet/*'
+    - 'https://charts.bitnami.com/bitnami'
+    - 'https://kubernetes.github.io/ingress-nginx'
+    - 'https://prometheus-community.github.io/helm-charts'
+    - 'https://grafana.github.io/helm-charts'
+  # Destination clusters and namespaces
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+  # Cluster resource whitelist
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+    - group: ''
+      kind: PersistentVolume
+    - group: 'rbac.authorization.k8s.io'
+      kind: ClusterRole
+    - group: 'rbac.authorization.k8s.io'
+      kind: ClusterRoleBinding
+    - group: 'networking.k8s.io'
+      kind: IngressClass
+    - group: 'apiextensions.k8s.io'
+      kind: CustomResourceDefinition
+    - group: 'admissionregistration.k8s.io'
+      kind: ValidatingAdmissionWebhook
+    - group: 'admissionregistration.k8s.io'
+      kind: MutatingAdmissionWebhook
+  # Namespace resource whitelist
+  namespaceResourceWhitelist:
+    - group: ''
+      kind: '*'
+    - group: 'apps'
+      kind: '*'
+    - group: 'networking.k8s.io'
+      kind: '*'
+    - group: 'extensions'
+      kind: '*'
+  # Roles for this project
+  roles:
+    - name: platform-admin
+      description: Platform administrators with full access
+      policies:
+        - p, proj:infrastructure:platform-admin, applications, *, infrastructure/*, allow
+        - p, proj:infrastructure:platform-admin, repositories, *, *, allow
+      groups:
+        - cyberdine-skynet:Platform
+    - name: infrastructure-viewer
+      description: Read-only access to infrastructure applications
+      policies:
+        - p, proj:infrastructure:infrastructure-viewer, applications, get, infrastructure/*, allow
+        - p, proj:infrastructure:infrastructure-viewer, applications, action/*, infrastructure/*, deny

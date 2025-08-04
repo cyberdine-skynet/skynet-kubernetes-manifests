@@ -1,0 +1,177 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: alloy
+  namespace: observability
+  labels:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/component: telemetry
+    app.kubernetes.io/part-of: observability-stack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: alloy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: alloy
+        app.kubernetes.io/component: telemetry
+    spec:
+      serviceAccountName: alloy
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: alloy
+          image: grafana/alloy:v0.38.0
+          args:
+            - run
+            - /etc/alloy/config.alloy
+            - --server.http.listen-addr=0.0.0.0:12345
+            - --stability.level=public-preview
+          ports:
+            - containerPort: 12345
+              name: http
+            - containerPort: 4317
+              name: otlp-grpc
+            - containerPort: 4318
+              name: otlp-http
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/alloy
+            - name: varlog
+              mountPath: /var/log
+              readOnly: true
+            - name: varlibdockercontainers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+            - name: proc
+              mountPath: /host/proc
+              readOnly: true
+            - name: sys
+              mountPath: /host/sys
+              readOnly: true
+          securityContext:
+            privileged: true
+            runAsUser: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: config
+          configMap:
+            name: alloy-config
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+        - name: proc
+          hostPath:
+            path: /proc
+        - name: sys
+          hostPath:
+            path: /sys
+      tolerations:
+        - operator: Exists
+          effect: NoSchedule
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alloy
+  namespace: observability
+  labels:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/component: telemetry
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: alloy
+  labels:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/component: telemetry
+rules:
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - nodes/proxy
+      - nodes/metrics
+      - services
+      - endpoints
+      - pods
+      - events
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources:
+      - ingresses
+    verbs: ["get", "list", "watch"]
+  - nonResourceURLs: ["/metrics", "/metrics/cadvisor"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: alloy
+  labels:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/component: telemetry
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: alloy
+subjects:
+  - kind: ServiceAccount
+    name: alloy
+    namespace: observability
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alloy
+  namespace: observability
+  labels:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/component: telemetry
+spec:
+  type: ClusterIP
+  ports:
+    - port: 12345
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: 4317
+      targetPort: otlp-grpc
+      protocol: TCP
+      name: otlp-grpc
+    - port: 4318
+      targetPort: otlp-http
+      protocol: TCP
+      name: otlp-http
+  selector:
+    app.kubernetes.io/name: alloy
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-config
+  namespace: observability
+  labels:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/component: telemetry
+data:
+  config.alloy: "// Grafana Alloy configuration for Skynet Platform\n\n// Logging configuration\nlogging {\n  level  = \"info\"\n  format = \"logfmt\"\n}\n\n// Loki logs discovery and forwarding\ndiscovery.kubernetes \"pods\" {\n  role = \"pod\"\n}\n\ndiscovery.relabel \"pod_logs\" {\n  targets = discovery.kubernetes.pods.targets\n\n  rule {\n    source_labels = [\"__meta_kubernetes_pod_phase\"]\n    regex         = \"Pending|Succeeded|Failed|Completed\"\n    action        = \"drop\"\n  }\n\n  rule {\n    source_labels = [\"__meta_kubernetes_pod_annotation_prometheus_io_scrape\"]\n    regex         = \"false\"\n    action        = \"drop\"\n  }\n}\n\nloki.source.kubernetes \"pods\" {\n  targets    = discovery.relabel.pod_logs.output\n  forward_to = [loki.write.default.receiver]\n}\n\nloki.write \"default\" {\n  endpoint {\n    url = \"http://loki:3100/loki/api/v1/push\"\n    \n    // Add custom labels\n    external_labels = {\n      cluster = \"skynet-cluster\",\n      env     = \"production\",\n    }\n  }\n}\n\n// Prometheus metrics discovery and scraping\ndiscovery.kubernetes \"services\" {\n  role = \"service\"\n}\n\ndiscovery.kubernetes \"endpoints\" {\n  role = \"endpoints\"\n}\n\ndiscovery.kubernetes \"pods_metrics\" {\n  role = \"pod\"\n}\n\n// Kubernetes API server metrics\ndiscovery.kubernetes \"api_server\" {\n  role = \"endpoints\"\n  namespaces {\n    names = [\"default\"]\n  }\n}\n\ndiscovery.relabel \"api_server\" {\n  targets = discovery.kubernetes.api_server.targets\n\n  rule {\n    source_labels = [\"__meta_kubernetes_namespace\", \"__meta_kubernetes_service_name\", \"__meta_kubernetes_endpoint_port_name\"]\n    regex         = \"default;kubernetes;https\"\n    action        = \"keep\"\n  }\n}\n\nprometheus.scrape \"api_server\" {\n  targets    = discovery.relabel.api_server.output\n  forward_to = [prometheus.remote_write.default.receiver]\n  \n  bearer_token_file = \"/var/run/secrets/kubernetes.io/serviceaccount/token\"\n  tls_config {\n    ca_file              = \"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt\"\n    insecure_skip_verify = true\n  }\n}\n\n// Node metrics\ndiscovery.kubernetes \"nodes\" {\n  role = \"node\"\n}\n\nprometheus.scrape \"nodes\" {\n  targets    = discovery.kubernetes.nodes.targets\n  forward_to = [prometheus.remote_write.default.receiver]\n  \n  bearer_token_file = \"/var/run/secrets/kubernetes.io/serviceaccount/token\"\n  tls_config {\n    ca_file              = \"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt\"\n    insecure_skip_verify = true\n  }\n}\n\n// cAdvisor metrics\nprometheus.scrape \"cadvisor\" {\n  targets         = discovery.kubernetes.nodes.targets\n  metrics_path    = \"/metrics/cadvisor\"\n  forward_to      = [prometheus.remote_write.default.receiver]\n  \n  bearer_token_file = \"/var/run/secrets/kubernetes.io/serviceaccount/token\"\n  tls_config {\n    ca_file              = \"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt\"\n    insecure_skip_verify = true\n  }\n}\n\n// Pod metrics with annotation-based discovery\ndiscovery.relabel \"pod_metrics\" {\n  targets = discovery.kubernetes.pods_metrics.targets\n\n  rule {\n    source_labels = [\"__meta_kubernetes_pod_annotation_prometheus_io_scrape\"]\n    regex         = \"true\"\n    action        = \"keep\"\n  }\n\n  rule {\n    source_labels = [\"__meta_kubernetes_pod_annotation_prometheus_io_path\"]\n    target_label  = \"__metrics_path__\"\n  }\n\n  rule {\n    source_labels = [\"__address__\", \"__meta_kubernetes_pod_annotation_prometheus_io_port\"]\n    regex         = \"([^:]+)(?::\\\\d+)?;(\\\\d+)\"\n    replacement   = \"${1}:${2}\"\n    target_label  = \"__address__\"\n  }\n\n  rule {\n    regex  = \"__meta_kubernetes_pod_label_(.+)\"\n    action = \"labelmap\"\n  }\n\n  rule {\n    source_labels = [\"__meta_kubernetes_namespace\"]\n    target_label  = \"kubernetes_namespace\"\n  }\n\n  rule {\n    source_labels = [\"__meta_kubernetes_pod_name\"]\n    target_label  = \"kubernetes_pod_name\"\n  }\n}\n\nprometheus.scrape \"pods\" {\n  targets    = discovery.relabel.pod_metrics.output\n  forward_to = [prometheus.remote_write.default.receiver]\n}\n\n// OpenTelemetry receiver for traces and metrics\notelcol.receiver.otlp \"default\" {\n  grpc {\n    endpoint = \"0.0.0.0:4317\"\n  }\n  http {\n    endpoint = \"0.0.0.0:4318\"\n  }\n\n  output {\n    metrics = [otelcol.processor.batch.default.input]\n    logs    = [otelcol.processor.batch.default.input]\n    traces  = [otelcol.processor.batch.default.input]\n  }\n}\n\notelcol.processor.batch \"default\" {\n  output {\n    metrics = [otelcol.exporter.prometheus.default.input]\n    logs    = [otelcol.exporter.loki.default.input]\n    traces  = [otelcol.exporter.jaeger.default.input]\n  }\n}\n\notelcol.exporter.prometheus \"default\" {\n  forward_to = [prometheus.remote_write.default.receiver]\n}\n\notelcol.exporter.loki \"default\" {\n  forward_to = [loki.write.default.receiver]\n}\n\notelcol.exporter.jaeger \"default\" {\n  client {\n    endpoint = \"http://tempo:14250\"\n    tls {\n      insecure = true\n    }\n  }\n}\n\n// Prometheus remote write\nprometheus.remote_write \"default\" {\n  endpoint {\n    url = \"http://prometheus:9090/api/v1/write\"\n    \n    // Add cluster labels\n    external_labels = {\n      cluster = \"skynet-cluster\",\n      region  = \"local\",\n    }\n  }\n}\n"

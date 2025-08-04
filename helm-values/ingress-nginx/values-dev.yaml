@@ -1,0 +1,29 @@
+controller:
+  # Enable NodePort service for direct access
+  service:
+    type: NodePort
+    nodePorts:
+      http: 30080
+      https: 30443
+  # Configure for bare metal
+  hostNetwork: false
+  hostPort:
+    enabled: false
+  # Resource configuration
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  # Metrics and monitoring
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  # Configure for LoadBalancer (will be pending on bare metal)
+  config:
+    use-forwarded-headers: "true"
+    compute-full-forwarded-for: "true"
+    use-proxy-protocol: "false"
