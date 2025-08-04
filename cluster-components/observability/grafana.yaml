@@ -31,7 +31,10 @@ spec:
               name: http
           env:
             - name: GF_SECURITY_ADMIN_PASSWORD
-              value: "admin123" # Change this in production
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-admin-secret
+                  key: admin-password
             - name: GF_INSTALL_PLUGINS
               value: "grafana-polystat-panel,grafana-piechart-panel"
             - name: GF_FEATURE_TOGGLES_ENABLE
