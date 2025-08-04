@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: observability-stack
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: observability-stack
+    app.kubernetes.io/component: infrastructure
+    app.kubernetes.io/part-of: skynet-platform
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infrastructure
+  source:
+    repoURL: https://github.com/cyberdine-skynet/skynet-kubernetes-manifests
+    targetRevision: main
+    path: cluster-components/observability
+    directory:
+      recurse: true
+      include: '*.yaml'
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m
+  revisionHistoryLimit: 3
+  info:
+  - name: Description
+    value: "Observability as Code stack with Grafana, Alloy, Loki, Prometheus, and Tanka"
+  - name: Components
+    value: "Prometheus, Grafana, Loki, Alloy (OpenTelemetry), Tanka sidecar, kubernetes-mixin"
