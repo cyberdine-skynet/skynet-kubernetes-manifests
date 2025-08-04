@@ -39,7 +39,7 @@ spec:
         maxDuration: 5m
   revisionHistoryLimit: 3
   info:
-  - name: Description
-    value: "Observability as Code stack with Grafana, Alloy, Loki, Prometheus, and Tanka"
-  - name: Components
-    value: "Prometheus, Grafana, Loki, Alloy (OpenTelemetry), Tanka sidecar, kubernetes-mixin"
+    - name: Description
+      value: "Observability as Code stack with Grafana, Alloy, Loki, Prometheus, and Tanka"
+    - name: Components
+      value: "Prometheus, Grafana, Loki, Alloy (OpenTelemetry), Tanka sidecar, kubernetes-mixin"

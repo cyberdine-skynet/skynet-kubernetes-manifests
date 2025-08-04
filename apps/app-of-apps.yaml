@@ -37,7 +37,7 @@ spec:
         maxDuration: 3m
   revisionHistoryLimit: 10
   info:
-  - name: Description
-    value: Root application managing all Skynet Platform applications via GitOps
-  - name: Documentation
-    value: https://github.com/cyberdine-skynet/skynet-kubernetes-manifests
+    - name: Description
+      value: Root application managing all Skynet Platform applications via GitOps
+    - name: Documentation
+      value: https://github.com/cyberdine-skynet/skynet-kubernetes-manifests

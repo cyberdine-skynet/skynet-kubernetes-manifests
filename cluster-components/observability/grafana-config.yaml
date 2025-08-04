@@ -47,7 +47,6 @@ data:
 
     [feature_toggles]
     enable = traceqlEditor
-
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -99,7 +98,6 @@ data:
           spanEndTimeShift: '1h'
           filterByTraceID: false
           filterBySpanID: false
-
 ---
 apiVersion: v1
 kind: ConfigMap
