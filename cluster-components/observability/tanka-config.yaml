@@ -8,7 +8,137 @@ metadata:
     app.kubernetes.io/component: observability-as-code
 data:
   # Main Tanka environment configuration
-  main.jsonnet: "local k = import 'ksonnet-util/kausal.libsonnet';\nlocal mixin = import 'kubernetes-mixin/mixin.libsonnet';\n\n// Kubernetes mixin configuration\nlocal mixinConfig = {\n  _config+:: {\n    // Cluster-specific configuration\n    clusterName: 'skynet-cluster',\n    grafanaUrl: 'http://grafana.observability.svc.cluster.local:3000',\n    \n    // Namespace patterns\n    namespaceSelector: 'kube_namespace_labels{label_name=\"skynet\"}',\n    \n    // Resource configurations\n    cpuThrottlingThreshold: 25,\n    memoryUtilizationThreshold: 80,\n    diskUtilizationThreshold: 85,\n    \n    // Alert routing\n    alertManagerUrl: 'http://alertmanager:9093',\n    \n    // Custom dashboard variables\n    dashboardTags: ['skynet', 'platform'],\n    \n    // SLO definitions\n    SLOs: {\n      apiserver: {\n        target: 99.9,\n        alertWindow: '2m',\n      },\n      applications: {\n        target: 99.5,\n        alertWindow: '5m',\n      },\n    },\n  },\n};\n\n// Generate Prometheus rules\nlocal prometheusRules = mixin + mixinConfig;\n\n// Generate Grafana dashboards\nlocal grafanaDashboards = (mixin + mixinConfig).grafanaDashboards;\n\n// Custom Skynet-specific rules\nlocal skynetRules = {\n  groups: [\n    {\n      name: 'skynet.platform.rules',\n      interval: '30s',\n      rules: [\n        // Platform health\n        {\n          alert: 'SkynetPlatformDown',\n          expr: 'up{job=~\"skynet-.*\"} == 0',\n          'for': '5m',\n          labels: {\n            severity: 'critical',\n            team: 'platform',\n          },\n          annotations: {\n            summary: 'Skynet platform component is down',\n            description: 'Platform component {{ $labels.job }} has been down for more than 5 minutes.',\n          },\n        },\n        // High memory usage\n        {\n          alert: 'SkynetHighMemoryUsage',\n          expr: 'container_memory_usage_bytes{namespace=~\"skynet-.*\"} / container_spec_memory_limit_bytes > 0.9',\n          'for': '10m',\n          labels: {\n            severity: 'warning',\n            team: 'platform',\n          },\n          annotations: {\n            summary: 'High memory usage in Skynet namespace',\n            description: 'Container {{ $labels.container }} in {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of memory.',\n          },\n        },\n        // GitOps sync failures\n        {\n          alert: 'ArgoSyncFailure',\n          expr: 'argocd_app_health_status{health_status!=\"Healthy\"} > 0',\n          'for': '15m',\n          labels: {\n            severity: 'warning',\n            team: 'platform',\n          },\n          annotations: {\n            summary: 'Argo CD application sync failure',\n            description: 'Argo CD application {{ $labels.name }} is not healthy.',\n          },\n        },\n      ],\n    },\n    {\n      name: 'skynet.slo.rules',\n      interval: '30s',\n      rules: [\n        // API availability SLI\n        {\n          record: 'skynet:api_availability:rate5m',\n          expr: 'sum(rate(http_requests_total{job=~\"skynet-.*\",code!~\"5..\"}[5m])) / sum(rate(http_requests_total{job=~\"skynet-.*\"}[5m]))',\n        },\n        // API latency SLI\n        {\n          record: 'skynet:api_latency:p99:rate5m',\n          expr: 'histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{job=~\"skynet-.*\"}[5m])) by (le))',\n        },\n      ],\n    },\n  ],\n};\n\n// Export all configurations\n{\n  // Prometheus rules combining mixin and custom rules\n  prometheusRules: k.core.v1.configMap.new('prometheus-rules-generated', {\n    'kubernetes-mixin.yml': std.manifestYamlDoc(prometheusRules.prometheusRules),\n    'skynet-rules.yml': std.manifestYamlDoc(skynetRules),\n  }),\n  \n  // Grafana dashboards\n  grafanaDashboards: {\n    [name]: k.core.v1.configMap.new('dashboard-' + name, {\n      [name + '.json']: std.manifestJsonEx(grafanaDashboards[name], '  '),\n    })\n    for name in std.objectFields(grafanaDashboards)\n  },\n}\n"
+  main.jsonnet: |
+    local k = import 'ksonnet-util/kausal.libsonnet';
+    local mixin = import 'kubernetes-mixin/mixin.libsonnet';
+    
+    // Kubernetes mixin configuration
+    local mixinConfig = {
+      _config+:: {
+        // Cluster-specific configuration
+        clusterName: 'skynet-cluster',
+        grafanaUrl: 'http://grafana.observability.svc.cluster.local:3000',
+        
+        // Namespace patterns
+        namespaceSelector: 'kube_namespace_labels{label_name="skynet"}',
+        
+        // Resource configurations
+        cpuThrottlingThreshold: 25,
+        memoryUtilizationThreshold: 80,
+        diskUtilizationThreshold: 85,
+        
+        // Alert routing
+        alertManagerUrl: 'http://alertmanager:9093',
+        
+        // Custom dashboard variables
+        dashboardTags: ['skynet', 'platform'],
+        
+        // SLO definitions
+        SLOs: {
+          apiserver: {
+            target: 99.9,
+            alertWindow: '2m',
+          },
+          applications: {
+            target: 99.5,
+            alertWindow: '5m',
+          },
+        },
+      },
+    };
+    
+    // Generate Prometheus rules
+    local prometheusRules = mixin + mixinConfig;
+    
+    // Generate Grafana dashboards
+    local grafanaDashboards = (mixin + mixinConfig).grafanaDashboards;
+    
+    // Custom Skynet-specific rules
+    local skynetRules = {
+      groups: [
+        {
+          name: 'skynet.platform.rules',
+          interval: '30s',
+          rules: [
+            // Platform health
+            {
+              alert: 'SkynetPlatformDown',
+              expr: 'up{job=~"skynet-.*"} == 0',
+              'for': '5m',
+              labels: {
+                severity: 'critical',
+                team: 'platform',
+              },
+              annotations: {
+                summary: 'Skynet platform component is down',
+                description: 'Platform component {{ $labels.job }} has been down for more than 5 minutes.',
+              },
+            },
+            // High memory usage
+            {
+              alert: 'SkynetHighMemoryUsage',
+              expr: 'container_memory_usage_bytes{namespace=~"skynet-.*"} / container_spec_memory_limit_bytes > 0.9',
+              'for': '10m',
+              labels: {
+                severity: 'warning',
+                team: 'platform',
+              },
+              annotations: {
+                summary: 'High memory usage in Skynet namespace',
+                description: 'Container {{ $labels.container }} in {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of memory.',
+              },
+            },
+            // GitOps sync failures
+            {
+              alert: 'ArgoSyncFailure',
+              expr: 'argocd_app_health_status{health_status!="Healthy"} > 0',
+              'for': '15m',
+              labels: {
+                severity: 'warning',
+                team: 'platform',
+              },
+              annotations: {
+                summary: 'Argo CD application sync failure',
+                description: 'Argo CD application {{ $labels.name }} is not healthy.',
+              },
+            },
+          ],
+        },
+        {
+          name: 'skynet.slo.rules',
+          interval: '30s',
+          rules: [
+            // API availability SLI
+            {
+              record: 'skynet:api_availability:rate5m',
+              expr: 'sum(rate(http_requests_total{job=~"skynet-.*",code!~"5.."}[5m])) / sum(rate(http_requests_total{job=~"skynet-.*"}[5m]))',
+            },
+            // API latency SLI
+            {
+              record: 'skynet:api_latency:p99:rate5m',
+              expr: 'histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{job=~"skynet-.*"}[5m])) by (le))',
+            },
+          ],
+        },
+      ],
+    };
+    
+    // Export all configurations
+    {
+      // Prometheus rules combining mixin and custom rules
+      prometheusRules: k.core.v1.configMap.new('prometheus-rules-generated', {
+        'kubernetes-mixin.yml': std.manifestYamlDoc(prometheusRules.prometheusRules),
+        'skynet-rules.yml': std.manifestYamlDoc(skynetRules),
+      }),
+      
+      // Grafana dashboards
+      grafanaDashboards: {
+        [name]: k.core.v1.configMap.new('dashboard-' + name, {
+          [name + '.json']: std.manifestJsonEx(grafanaDashboards[name], '  '),
+        })
+        for name in std.objectFields(grafanaDashboards)
+      },
+    }
   # Tanka spec file
   spec.json: |
     {
